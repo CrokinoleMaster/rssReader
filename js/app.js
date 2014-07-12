@@ -18,7 +18,7 @@ angular.module('rss', ['ionic'])
   });
 })
 
-.controller('MainCtrl', function($scope, $ionicModal, $ionicSideMenuDelegate, $timeout, Feeds) {
+.controller('MainCtrl', function($scope, $ionicModal, $ionicSideMenuDelegate, $ionicPopup, $timeout, Feeds) {
 
   $scope.exLink = function (link){
     var url = link.href;
@@ -62,7 +62,6 @@ angular.module('rss', ['ionic'])
     Feeds.save($scope.feeds);
     $scope.currentDeleteIndex = null;
     $scope.selectFeed($scope.feeds[0], 0);
-    $scope.deleteFeedModal.hide();
   }
 
   $scope.selectFeed = function(feed, index) {
@@ -79,13 +78,19 @@ angular.module('rss', ['ionic'])
     $scope.feedModal.hide();
   };
 
-  $scope.showDeleteFeedModal = function(index) {
-    $scope.currentDeleteIndex = index;
-    $scope.deleteFeedModal.show();
-  };
-
-  $scope.closeDeleteFeed = function() {
-    $scope.deleteFeedModal.hide();
+  $scope.showDeleteAlert = function(index) {
+    var confirmPopup = $ionicPopup.confirm({
+      title: 'Delete Feed',
+      template: 'Are you sure you want to delete this RSS feed?',
+      okText: 'Delete',
+      okType: 'button-assertive'
+    });
+    confirmPopup.then(function(res) {
+      if (res) {
+        $scope.deleteFeed(index)
+      } else {
+      }
+    });
   };
 
   $scope.toggleFeedList = function() {
@@ -94,11 +99,6 @@ angular.module('rss', ['ionic'])
 
   $ionicModal.fromTemplateUrl('new-feed.html', function(modal) {
     $scope.feedModal = modal;
-  }, {
-    scope: $scope
-  });
-  $ionicModal.fromTemplateUrl('delete-feed.html', function(modal) {
-    $scope.deleteFeedModal = modal;
   }, {
     scope: $scope
   });

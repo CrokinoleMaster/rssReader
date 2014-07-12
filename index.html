@@ -63,7 +63,7 @@
           <ion-list>
             <ion-item class="item-button-right" ng-repeat="feed in feeds" ng-class="{active: activeFeed.feedUrl == feed.url}">
                 <p ng-click="selectFeed(feed, $index)">{{feed.title}}</p>
-                <button class="button button-clear button-assertive icon ion-ios7-minus" ng-click="showDeleteFeedModal($index)"></button>
+                <button class="button button-clear button-assertive icon ion-ios7-minus" ng-click="showDeleteAlert($index)"></button>
             </ion-item>
           </ion-list>
         </ion-content>
@@ -89,23 +89,6 @@
             </div>
             <div class="padding">
               <button type="submit" class="button button-block button-calm" >Ok</button>
-            </div>
-          </form>
-        </ion-content>
-      </div>
-    </script>
-
-    <script id="delete-feed.html" type="text/ng-template">
-      <div class="modal">
-        <ion-header-bar class="bar-secondary">
-          <h1 class="title">Delete Feed</h1>
-          <button class="button button-clear button-calm" ng-click="closeDeleteFeed()">Cancel</button>
-        </ion-header-bar>
-        <ion-content>
-          <form ng-submit="deleteFeed(currentDeleteIndex)">
-            <p>Are you sure you want to delete this feed</p>
-            <div class="padding">
-              <button type="submit" class="button button-block button-assertive" >Delete</button>
             </div>
           </form>
         </ion-content>
