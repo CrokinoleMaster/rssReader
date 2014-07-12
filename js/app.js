@@ -20,17 +20,39 @@ angular.module('rss', ['ionic'])
 
 .controller('MainCtrl', function($scope, $ionicModal, $ionicSideMenuDelegate, Feeds) {
 
+  var createFeed = function(feedTitle, feedURL) {
+    var newFeed = Feeds.newFeed(feedTitle, feedURL);
+    $scope.feeds.push(newFeed);
+    Feeds.save($scope.feeds);
+    $scope.selectFeed(newFeed, $scope.feeds.length-1);
+  }
+
   $scope.feeds = Feeds.all();
 
-  $scope.newFeed = function() {
+  $scope.activeFeed = $scope.feeds[Feeds.getLastActiveIndex()];
+
+  $scope.showFeedModal = function() {
     $scope.feedModal.show();
+  };
+
+  $scope.newFeed = function(newFeed) {
+    if (newFeed) {
+      $scope.feedModal.hide();
+      createFeed(newFeed.title, newFeed.url);
+    }
+  };
+
+  $scope.selectFeed = function(feed, index) {
+    $scope.activeFeed = feed;
+    Feeds.setLastActiveIndex(index);
+    $ionicSideMenuDelegate.toggleLeft(false);
   };
 
   $scope.closeNewFeed = function() {
     $scope.feedModal.hide();
-  }
+  };
 
-  $scope.toggleRSSList = function() {
+  $scope.toggleFeedList = function() {
     $ionicSideMenuDelegate.toggleLeft();
   };
 

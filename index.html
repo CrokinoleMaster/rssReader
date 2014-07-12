@@ -26,10 +26,10 @@
 
       <ion-side-menu-content>
         <ion-header-bar class="bar-dark">
-          <button class="button button-icon" ng-click="toggleRSSList()">
+          <button class="button button-icon" ng-click="toggleFeedList()">
               <i class="icon ion-navicon"></i>
           </button>
-          <h1 class="title">RSS</h1>
+          <h1 class="title">{{ActiveFeed.title}}</h1>
         </ion-header-bar>
         <ion-content>
         </ion-content>
@@ -37,13 +37,14 @@
 
       <ion-side-menu side="left">
         <ion-header-bar class="bar-dark">
-          <h1 class="title">RSS</h1>
-          <button class="button button-icon ion-plus" ng-click="newFeed()">
+          <h1 class="title">Feeds</h1>
+          <button class="button button-icon ion-plus" ng-click="showFeedModal()">
           </button>
         </ion-header-bar>
         <ion-content>
           <ion-list>
-            <ion-item>
+            <ion-item ng-repeat="feed in feeds" ng-click="selectFeed(feed, $index)" ng-class="{active: activeFeed == feed}">
+              {{feed.title}}
             </ion-item>
           </ion-list>
         </ion-content>
@@ -58,17 +59,17 @@
           <button class="button button-clear button-positive" ng-click="closeNewFeed()">Cancel</button>
         </ion-header-bar>
         <ion-content>
-          <form>
+          <form ng-submit="newFeed(newFeed)">
             <div class="list">
               <label class="item item-input">
-                <input type="text" placeholder="title">
+                <input type="text" placeholder="title" ng-model="newFeed.title">
               </label>
               <label class="item item-input">
-                <input type="text" placeholder="URL">
+                <input type="text" placeholder="URL" ng-model="newFeed.url">
               </label>
             </div>
             <div class="padding">
-              <button type="submit" class="button button-block button-positive">Ok</button>
+              <button type="submit" class="button button-block button-positive" >Ok</button>
             </div>
           </form>
         </ion-content>
