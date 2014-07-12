@@ -18,7 +18,12 @@ angular.module('rss', ['ionic'])
   });
 })
 
-.controller('MainCtrl', function($scope, $ionicModal, $ionicSideMenuDelegate, Feeds) {
+.controller('MainCtrl', function($scope, $ionicModal, $ionicSideMenuDelegate, $timeout, Feeds) {
+
+  $scope.exLink = function (link){
+    var url = link.href;
+    window.open(encodeURI(url), '_system', 'location=yes');
+  };
 
   var createFeed = function(feedTitle, feedURL) {
     var newFeed = Feeds.newFeed(feedTitle, feedURL);
@@ -26,6 +31,17 @@ angular.module('rss', ['ionic'])
     Feeds.save($scope.feeds);
     $scope.selectFeed(newFeed, $scope.feeds.length-1);
   }
+
+  var loadFeed = function(url) {
+    Feeds.parseFeed(url).then(function(res) {
+      console.log(res.data.responseData.feed);
+      $scope.activeFeed = res.data.responseData.feed;
+    });
+  }
+
+  $scope.goToLink = function(url) {
+    window.open(url, '_system');
+  };
 
   $scope.feeds = Feeds.all();
 
@@ -43,7 +59,7 @@ angular.module('rss', ['ionic'])
   };
 
   $scope.selectFeed = function(feed, index) {
-    $scope.activeFeed = feed;
+    loadFeed(feed.url);
     Feeds.setLastActiveIndex(index);
     $ionicSideMenuDelegate.toggleLeft(false);
   };
@@ -64,7 +80,7 @@ angular.module('rss', ['ionic'])
 
 })
 
-.factory('Feeds', function() {
+.factory('Feeds', ['$http', function($http) {
   return {
     all: function() {
       var feedString = window.localStorage['feeds'];
@@ -87,6 +103,22 @@ angular.module('rss', ['ionic'])
     },
     setLastActiveIndex: function(index) {
       window.localStorage['lastActiveFeed'] = index;
+    },
+    parseFeed: function(url) {
+      return $http.jsonp('http://ajax.googleapis.com/ajax/services/feed/load?' +
+          'v=1.0&callback=JSON_CALLBACK&num=20&q=' + encodeURIComponent(url));
     }
   }
+}])
+
+.filter('externalLinks', function() {
+  return function(text) {
+    return String(text).replace(/href=/gm, "onclick=\"angular.element(this).scope().exLink(this);return false\" href=");
+  };
 })
+
+.filter('to_trusted', ['$sce', function($sce){
+  return function(text) {
+    return $sce.trustAsHtml(text);
+  };
+}])

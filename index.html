@@ -29,9 +29,24 @@
           <button class="button button-icon" ng-click="toggleFeedList()">
               <i class="icon ion-navicon"></i>
           </button>
-          <h1 class="title">{{ActiveFeed.title}}</h1>
+          <h1 class="title">{{activeFeed.title}} - {{activeFeed.feedUrl}}</h1>
         </ion-header-bar>
         <ion-content>
+            <div class="list card" ng-repeat="article in activeFeed.entries">
+                <div class="item item-divider">
+                    <h2>{{article.title}}</h2>
+                    <p>
+                        <a class="subdued">{{article.publishedDate}}</a>
+                    </p>
+                </div>
+                <div class="item item-body" ng-bind-html="article.content | externalLinks | to_trusted">
+                </div>
+                <div class="item item-body">
+                    <p>
+                        <a href="#" ng-click="goToLink('{{article.link}}')">link</a>
+                    </p>
+                </div>
+            </div>
         </ion-content>
       </ion-side-menu-content>
 
@@ -44,7 +59,14 @@
         <ion-content>
           <ion-list>
             <ion-item ng-repeat="feed in feeds" ng-click="selectFeed(feed, $index)" ng-class="{active: activeFeed == feed}">
-              {{feed.title}}
+            <ul class="list">
+                <li>
+                    <strong>{{feed.title}}</strong>
+                </li>
+                <li>
+                    {{feed.url}}
+                </li>
+            </ul>
             </ion-item>
           </ion-list>
         </ion-content>
