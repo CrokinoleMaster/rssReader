@@ -25,14 +25,16 @@
     <ion-side-menus>
 
       <ion-side-menu-content>
-        <ion-header-bar class="bar-dark">
+        <ion-header-bar class="bar-calm">
           <button class="button button-icon" ng-click="toggleFeedList()">
               <i class="icon ion-navicon"></i>
           </button>
-          <h1 class="title">{{activeFeed.title}} - {{activeFeed.feedUrl}}</h1>
+          <h1 class="title">{{activeFeed.title}}</h1>
         </ion-header-bar>
         <ion-content>
-            <div class="list card" ng-repeat="article in activeFeed.entries">
+            <ion-refresher pulling-text="Pull to refresh..." on-refresh="loadFeed(activeFeed.feedUrl)">
+            </ion-refresher>
+            <ion-list class="list card" ng-repeat="article in activeFeed.entries">
                 <div class="item item-divider">
                     <h2>{{article.title}}</h2>
                     <p>
@@ -41,32 +43,27 @@
                 </div>
                 <div class="item item-body" ng-bind-html="article.content | externalLinks | to_trusted">
                 </div>
-                <div class="item item-body">
-                    <p>
-                        <a href="#" ng-click="goToLink('{{article.link}}')">link</a>
-                    </p>
+                <div class="item item-divider">
+                    <a class="positive" ng-click="goToLink('{{article.link}}')">link</a>
                 </div>
-            </div>
+            </ion-list>
         </ion-content>
+        <div class="bar bar-calm bar-footer">
+            <h1 class="title">{{activeFeed.feedUrl}}</div>
+        </div>
       </ion-side-menu-content>
 
       <ion-side-menu side="left">
-        <ion-header-bar class="bar-dark">
+        <ion-header-bar class="bar-calm">
           <h1 class="title">Feeds</h1>
           <button class="button button-icon ion-plus" ng-click="showFeedModal()">
           </button>
         </ion-header-bar>
         <ion-content>
           <ion-list>
-            <ion-item ng-repeat="feed in feeds" ng-click="selectFeed(feed, $index)" ng-class="{active: activeFeed == feed}">
-            <ul class="list">
-                <li>
-                    <strong>{{feed.title}}</strong>
-                </li>
-                <li>
-                    {{feed.url}}
-                </li>
-            </ul>
+            <ion-item class="item-button-right" ng-repeat="feed in feeds" ng-class="{active: activeFeed.feedUrl == feed.url}">
+                <p ng-click="selectFeed(feed, $index)">{{feed.title}}</p>
+                <button class="button button-clear button-assertive icon ion-ios7-minus" ng-click="showDeleteFeedModal($index)"></button>
             </ion-item>
           </ion-list>
         </ion-content>
@@ -78,7 +75,7 @@
       <div class="modal">
         <ion-header-bar class="bar-secondary">
           <h1 class="title">New Feed</h1>
-          <button class="button button-clear button-positive" ng-click="closeNewFeed()">Cancel</button>
+          <button class="button button-clear button-calm" ng-click="closeNewFeed()">Cancel</button>
         </ion-header-bar>
         <ion-content>
           <form ng-submit="newFeed(newFeed)">
@@ -91,7 +88,24 @@
               </label>
             </div>
             <div class="padding">
-              <button type="submit" class="button button-block button-positive" >Ok</button>
+              <button type="submit" class="button button-block button-calm" >Ok</button>
+            </div>
+          </form>
+        </ion-content>
+      </div>
+    </script>
+
+    <script id="delete-feed.html" type="text/ng-template">
+      <div class="modal">
+        <ion-header-bar class="bar-secondary">
+          <h1 class="title">Delete Feed</h1>
+          <button class="button button-clear button-calm" ng-click="closeDeleteFeed()">Cancel</button>
+        </ion-header-bar>
+        <ion-content>
+          <form ng-submit="deleteFeed(currentDeleteIndex)">
+            <p>Are you sure you want to delete this feed</p>
+            <div class="padding">
+              <button type="submit" class="button button-block button-assertive" >Delete</button>
             </div>
           </form>
         </ion-content>

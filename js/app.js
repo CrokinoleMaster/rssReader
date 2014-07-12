@@ -32,24 +32,23 @@ angular.module('rss', ['ionic'])
     $scope.selectFeed(newFeed, $scope.feeds.length-1);
   }
 
-  var loadFeed = function(url) {
-    Feeds.parseFeed(url).then(function(res) {
-      console.log(res.data.responseData.feed);
-      $scope.activeFeed = res.data.responseData.feed;
-    });
-  }
-
   $scope.goToLink = function(url) {
     window.open(url, '_system');
   };
 
+  $scope.loadFeed = function(url) {
+    Feeds.parseFeed(url).then(function(res) {
+      if (res.data.responseData){
+        $scope.activeFeed = res.data.responseData.feed;
+      } else {
+        alert('failed to load the requested RSS feed.');
+      }
+    }).finally(function() {
+      $scope.$broadcast('scroll.refreshComplete');
+    });
+  }
+
   $scope.feeds = Feeds.all();
-
-  $scope.activeFeed = $scope.feeds[Feeds.getLastActiveIndex()];
-
-  $scope.showFeedModal = function() {
-    $scope.feedModal.show();
-  };
 
   $scope.newFeed = function(newFeed) {
     if (newFeed) {
@@ -58,14 +57,35 @@ angular.module('rss', ['ionic'])
     }
   };
 
+  $scope.deleteFeed = function(index) {
+    $scope.feeds.splice(index, 1);
+    Feeds.save($scope.feeds);
+    $scope.currentDeleteIndex = null;
+    $scope.selectFeed($scope.feeds[0], 0);
+    $scope.deleteFeedModal.hide();
+  }
+
   $scope.selectFeed = function(feed, index) {
-    loadFeed(feed.url);
+    $scope.loadFeed(feed.url);
     Feeds.setLastActiveIndex(index);
     $ionicSideMenuDelegate.toggleLeft(false);
   };
 
+  $scope.showFeedModal = function() {
+    $scope.feedModal.show();
+  };
+
   $scope.closeNewFeed = function() {
     $scope.feedModal.hide();
+  };
+
+  $scope.showDeleteFeedModal = function(index) {
+    $scope.currentDeleteIndex = index;
+    $scope.deleteFeedModal.show();
+  };
+
+  $scope.closeDeleteFeed = function() {
+    $scope.deleteFeedModal.hide();
   };
 
   $scope.toggleFeedList = function() {
@@ -77,6 +97,14 @@ angular.module('rss', ['ionic'])
   }, {
     scope: $scope
   });
+  $ionicModal.fromTemplateUrl('delete-feed.html', function(modal) {
+    $scope.deleteFeedModal = modal;
+  }, {
+    scope: $scope
+  });
+
+  $scope.selectFeed($scope.feeds[Feeds.getLastActiveIndex()],
+      Feeds.getLastActiveIndex());
 
 })
 
