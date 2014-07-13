@@ -136,8 +136,11 @@ angular.module('rss', ['ionic'])
       window.localStorage['lastActiveFeed'] = index;
     },
     parseFeed: function(url) {
+      if (url.indexOf("http://") != 0) {
+        url = 'http://' + url;
+      }
       return $http.jsonp('http://ajax.googleapis.com/ajax/services/feed/load?' +
-          'v=1.0&callback=JSON_CALLBACK&num=20&q=' + encodeURIComponent('http://' + url));
+          'v=1.0&callback=JSON_CALLBACK&num=20&q=' + encodeURIComponent(url));
     }
   }
 }])
