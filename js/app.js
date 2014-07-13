@@ -19,7 +19,17 @@ angular.module('rss', ['ionic'])
 })
 
 .controller('MainCtrl',
-    function($scope, $ionicModal, $ionicSideMenuDelegate, $ionicPopup, $timeout, $ionicScrollDelegate, Feeds) {
+function($scope, $ionicModal, $ionicLoading, $ionicSideMenuDelegate, $ionicPopup, $timeout, $ionicScrollDelegate, Feeds) {
+
+  var showLoading = function() {
+    $ionicLoading.show({
+      template: 'Loading...'
+    });
+  };
+
+  var hideLoading = function() {
+    $ionicLoading.hide();
+  }
 
   $scope.exLink = function (link){
     var url = link.href;
@@ -27,6 +37,7 @@ angular.module('rss', ['ionic'])
   };
 
   var createFeed = function(feedTitle, feedURL) {
+    showLoading();
     Feeds.parseFeed(feedURL).then(function(res) {
       if (res.data.responseData) {
         var newFeed = Feeds.newFeed(feedTitle, res.data.responseData.feed.feedUrl);
@@ -34,6 +45,7 @@ angular.module('rss', ['ionic'])
         Feeds.save($scope.feeds);
         $scope.selectFeed(newFeed, $scope.feeds.length-1);
       } else {
+        hideLoading();
         alert('failed to load the requested RSS link.');
       }
     });
@@ -43,7 +55,8 @@ angular.module('rss', ['ionic'])
     window.open(url, '_system');
   };
 
-  $scope.loadFeed = function(url) {
+  $scope.loadFeed = function(url, loading) {
+    if (loading){ showLoading(); }
     Feeds.parseFeed(url).then(function(res) {
       if (res.data.responseData){
         $scope.activeFeed = res.data.responseData.feed;
@@ -53,6 +66,7 @@ angular.module('rss', ['ionic'])
       }
     }).finally(function() {
       $scope.$broadcast('scroll.refreshComplete');
+      if (loading){ hideLoading(); }
     });
   }
 
@@ -74,7 +88,7 @@ angular.module('rss', ['ionic'])
 
   $scope.selectFeed = function(feed, index) {
     if (feed) {
-      $scope.loadFeed(feed.url);
+      $scope.loadFeed(feed.url, true);
       Feeds.setLastActiveIndex(index);
       $ionicSideMenuDelegate.toggleLeft(false);
       $ionicScrollDelegate.$getByHandle('mainScroll').scrollTop();
