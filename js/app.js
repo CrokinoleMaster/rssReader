@@ -18,7 +18,8 @@ angular.module('rss', ['ionic'])
   });
 })
 
-.controller('MainCtrl', function($scope, $ionicModal, $ionicSideMenuDelegate, $ionicPopup, $timeout, Feeds) {
+.controller('MainCtrl',
+    function($scope, $ionicModal, $ionicSideMenuDelegate, $ionicPopup, $timeout, $ionicScrollDelegate, Feeds) {
 
   $scope.exLink = function (link){
     var url = link.href;
@@ -70,6 +71,7 @@ angular.module('rss', ['ionic'])
       $scope.loadFeed(feed.url);
       Feeds.setLastActiveIndex(index);
       $ionicSideMenuDelegate.toggleLeft(false);
+      $ionicScrollDelegate.$getByHandle('mainScroll').scrollTop();
     }
   };
 

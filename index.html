@@ -31,7 +31,7 @@
           </button>
           <h1 class="title">{{activeFeed.title}}</h1>
         </ion-header-bar>
-        <ion-content>
+        <ion-content delegate-handle="mainScroll">
             <ion-refresher pulling-text="Pull to refresh..." on-refresh="loadFeed(activeFeed.feedUrl)">
             </ion-refresher>
             <ion-list class="list card" ng-repeat="article in activeFeed.entries">
