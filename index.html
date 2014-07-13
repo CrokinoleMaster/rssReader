@@ -61,9 +61,9 @@
         </ion-header-bar>
         <ion-content>
           <ion-list>
-            <ion-item class="item-button-right" ng-repeat="feed in feeds" ng-class="{active: activeFeed.feedUrl == feed.url}">
-                <p ng-click="selectFeed(feed, $index)">{{feed.title}}</p>
-                <button class="button button-clear button-assertive icon ion-ios7-minus" ng-click="showDeleteAlert($index)"></button>
+            <ion-item class="item-button-right" ng-click="selectFeed(feed, $index)" ng-repeat="feed in feeds" ng-class="{active: activeFeed.feedUrl == feed.url}">
+                <p>{{feed.title}}</p>
+                <button class="button button-clear button-assertive icon ion-ios7-minus" ng-click="showDeleteAlert($index, $event)"></button>
             </ion-item>
           </ion-list>
         </ion-content>

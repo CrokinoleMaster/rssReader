@@ -83,7 +83,11 @@ function($scope, $ionicModal, $ionicLoading, $ionicSideMenuDelegate, $ionicPopup
     $scope.feeds.splice(index, 1);
     Feeds.save($scope.feeds);
     $scope.currentDeleteIndex = null;
-    $scope.selectFeed($scope.feeds[0], 0);
+    if (index === Feeds.getLastActiveIndex()) {
+      console.log(index);
+      console.log(Feeds.getLastActiveIndex());
+      $scope.selectFeed($scope.feeds[0], 0);
+    }
   }
 
   $scope.selectFeed = function(feed, index) {
@@ -103,7 +107,8 @@ function($scope, $ionicModal, $ionicLoading, $ionicSideMenuDelegate, $ionicPopup
     $scope.feedModal.hide();
   };
 
-  $scope.showDeleteAlert = function(index) {
+  $scope.showDeleteAlert = function(index, $event) {
+    $event.stopPropagation();
     var confirmPopup = $ionicPopup.confirm({
       title: 'Delete Feed',
       template: 'Are you sure you want to delete this RSS feed?',
