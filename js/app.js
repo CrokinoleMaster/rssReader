@@ -27,10 +27,16 @@ angular.module('rss', ['ionic'])
   };
 
   var createFeed = function(feedTitle, feedURL) {
-    var newFeed = Feeds.newFeed(feedTitle, feedURL);
-    $scope.feeds.push(newFeed);
-    Feeds.save($scope.feeds);
-    $scope.selectFeed(newFeed, $scope.feeds.length-1);
+    Feeds.parseFeed(feedURL).then(function(res) {
+      if (res.data.responseData) {
+        var newFeed = Feeds.newFeed(feedTitle, res.data.responseData.feed.feedUrl);
+        $scope.feeds.push(newFeed);
+        Feeds.save($scope.feeds);
+        $scope.selectFeed(newFeed, $scope.feeds.length-1);
+      } else {
+        alert('failed to load the requested RSS link.');
+      }
+    });
   }
 
   $scope.goToLink = function(url) {
@@ -108,8 +114,10 @@ angular.module('rss', ['ionic'])
     scope: $scope
   });
 
-  $scope.selectFeed($scope.feeds[Feeds.getLastActiveIndex()],
-      Feeds.getLastActiveIndex());
+  if ($scope.feeds && Feeds.getLastActiveIndex()) {
+    $scope.selectFeed($scope.feeds[Feeds.getLastActiveIndex()],
+        Feeds.getLastActiveIndex());
+  }
 
 })
 
@@ -138,11 +146,13 @@ angular.module('rss', ['ionic'])
       window.localStorage['lastActiveFeed'] = index;
     },
     parseFeed: function(url) {
-      if (url.indexOf("http://") != 0) {
-        url = 'http://' + url;
+      if (url) {
+        if (url.indexOf("http://") != 0) {
+          url = 'http://' + url;
+        }
+        return $http.jsonp('http://ajax.googleapis.com/ajax/services/feed/load?' +
+            'v=1.0&callback=JSON_CALLBACK&num=20&q=' + encodeURIComponent(url));
       }
-      return $http.jsonp('http://ajax.googleapis.com/ajax/services/feed/load?' +
-          'v=1.0&callback=JSON_CALLBACK&num=20&q=' + encodeURIComponent(url));
     }
   }
 }])
