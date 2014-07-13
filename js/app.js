@@ -40,6 +40,7 @@ angular.module('rss', ['ionic'])
     Feeds.parseFeed(url).then(function(res) {
       if (res.data.responseData){
         $scope.activeFeed = res.data.responseData.feed;
+        console.log($scope.activeFeed);
       } else {
         alert('failed to load the requested RSS feed.');
       }
@@ -65,9 +66,11 @@ angular.module('rss', ['ionic'])
   }
 
   $scope.selectFeed = function(feed, index) {
-    $scope.loadFeed(feed.url);
-    Feeds.setLastActiveIndex(index);
-    $ionicSideMenuDelegate.toggleLeft(false);
+    if (feed) {
+      $scope.loadFeed(feed.url);
+      Feeds.setLastActiveIndex(index);
+      $ionicSideMenuDelegate.toggleLeft(false);
+    }
   };
 
   $scope.showFeedModal = function() {
@@ -134,7 +137,7 @@ angular.module('rss', ['ionic'])
     },
     parseFeed: function(url) {
       return $http.jsonp('http://ajax.googleapis.com/ajax/services/feed/load?' +
-          'v=1.0&callback=JSON_CALLBACK&num=20&q=' + encodeURIComponent(url));
+          'v=1.0&callback=JSON_CALLBACK&num=20&q=' + encodeURIComponent('http://' + url));
     }
   }
 }])
