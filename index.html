@@ -34,6 +34,9 @@
         <ion-content delegate-handle="mainScroll">
             <ion-refresher pulling-text="Pull to refresh..." on-refresh="loadFeed(activeFeed.feedUrl)">
             </ion-refresher>
+            <div class="item" ng-hide="activeFeed">
+                <h2>Add some RSS feeds!</h2>
+            </div>
             <ion-list class="list card" ng-repeat="article in activeFeed.entries">
                 <div class="item item-divider">
                     <h2>{{article.title}}</h2>

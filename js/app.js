@@ -84,9 +84,10 @@ function($scope, $ionicModal, $ionicLoading, $ionicSideMenuDelegate, $ionicPopup
     Feeds.save($scope.feeds);
     $scope.currentDeleteIndex = null;
     if (index === Feeds.getLastActiveIndex()) {
-      console.log(index);
-      console.log(Feeds.getLastActiveIndex());
       $scope.selectFeed($scope.feeds[0], 0);
+    }
+    if ($scope.feeds.length === 0) {
+      $scope.activeFeed = null;
     }
   }
 
@@ -133,9 +134,15 @@ function($scope, $ionicModal, $ionicLoading, $ionicSideMenuDelegate, $ionicPopup
     scope: $scope
   });
 
-  if ($scope.feeds) {
+  if (typeof $scope.feeds !== 'undefined' && $scope.feeds.length > 0) {
     $scope.selectFeed($scope.feeds[Feeds.getLastActiveIndex()],
         Feeds.getLastActiveIndex());
+  } else {
+    $scope.$watch('feedModal', function(modal) {
+      if (modal) {
+        $scope.showFeedModal();
+      }
+    });
   }
 
 })
