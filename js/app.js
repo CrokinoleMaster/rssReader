@@ -60,8 +60,8 @@ angular.module('rss', ['ionic'])
 
   $scope.newFeed = function(newFeed) {
     if (newFeed) {
+      createFeed(newFeed.title, newFeed.url)
       $scope.feedModal.hide();
-      createFeed(newFeed.title, newFeed.url);
     }
   };
 
