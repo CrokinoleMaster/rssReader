@@ -133,7 +133,7 @@ function($scope, $ionicModal, $ionicLoading, $ionicSideMenuDelegate, $ionicPopup
     scope: $scope
   });
 
-  if ($scope.feeds && Feeds.getLastActiveIndex()) {
+  if ($scope.feeds) {
     $scope.selectFeed($scope.feeds[Feeds.getLastActiveIndex()],
         Feeds.getLastActiveIndex());
   }
